@@ -4,8 +4,8 @@ kind: Kustomization
 resources:
 # pull in the base manifests from the remote repository, so we don't need to duplicate them here
 - github.com/stefanprodan/podinfo//kustomize
-# add our Ingress manifest (from Lab ingress-nginx)
-# - ingress.yaml
+#add our Ingress manifest (from Lab ingress-nginx)
+- ingress.yaml
 # # add our ServiceMonitor manifest (from Lab Prometheus Operator)
 # - servicemonitor.yaml
 # # add load generator Deployment (from Lab Prometheus Operator)
