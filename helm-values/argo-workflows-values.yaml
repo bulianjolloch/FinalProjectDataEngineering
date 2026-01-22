@@ -43,12 +43,12 @@ server:
     ingressClassName: "nginx"
 
     hosts:
-      - argoworkflows.timebertt.dski23a.timebertt.dev
+      - argoworkflows.group-unop.dski23a.timebertt.dev
 
     tls: 
       - secretName: argoworkflows-tls
         hosts:
-          - argoworkflows.timebertt.dski23a.timebertt.dev
+          - argoworkflows.group-unop.dski23a.timebertt.dev
         
 
 # -----------------------------

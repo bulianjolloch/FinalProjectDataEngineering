@@ -83,10 +83,10 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt
   ingressClassName: nginx
   hosts: 
-    - jupyterlab.timebertt.dski23a.timebertt.dev
+    - jupyterlab.group-unop.dski23a.timebertt.dev
   tls: 
     - hosts:
-        - jupyterlab.timebertt.dski23a.timebertt.dev
+        - jupyterlab.group-unop.dski23a.timebertt.dev
       secretName: jupyterlab-tls
 
   

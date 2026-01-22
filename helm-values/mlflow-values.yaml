@@ -42,14 +42,14 @@ ingress:
     kubernetes.io/proxy-send-timeout: "3600"
     kubernetes.io/ssl-redirect: "true"
   hosts:
-    - host: "mlflow.timebertt.dski23a.timebertt.dev"
+    - host: "mlflow.group-unop.dski23a.timebertt.dev"
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls:
     - secretName: mlflow-tls
       hosts:
-        - "mlflow.timebertt.dski23a.timebertt.dev"
+        - "mlflow.group-unop.dski23a.timebertt.dev"
       
 
 resources:

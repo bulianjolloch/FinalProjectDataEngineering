@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Marius2311/wdski23a-mlops-gitops.git
+    repoURL: https://github.com/bulianjolloch/FinalProjectDataEngineering.git
     path: infrastructure
     directory:
       recurse: true

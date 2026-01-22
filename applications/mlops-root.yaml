@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/Marius2311/wdski23a-mlops-gitops.git
+    repoURL: https://github.com/bulianjolloch/FinalProjectDataEngineering.git
     targetRevision: main
     path: applications
 
