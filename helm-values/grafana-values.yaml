@@ -1,0 +1,32 @@
+grafana:
+  adminPassword: "admin" # Change this or use a secret in production
+  
+  persistence:
+    enabled: true
+    storageClassName: local-path
+    size: 10Gi
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.group-unop.dski23a.timebertt.dev
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.group-unop.dski23a.timebertt.dev
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {} # Scrape ServiceMonitors in ALL namespaces
+    
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
