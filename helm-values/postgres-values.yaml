@@ -17,5 +17,8 @@ service:
   ports:
     postgresql: 5432
 
+volumePermissions:
+  enabled: true
+
 metrics:
   enabled: false
