@@ -17,5 +17,16 @@ service:
   ports:
     postgresql: 5432
 
+# ...existing code...
 metrics:
-  enabled: false
+  enabled: true       # <--- Change to true
+  service:
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+  serviceMonitor:
+    enabled: true     # <--- Create the ServiceMonitor CRD
+    namespace: data-storage
+    interval: 30s
+    labels:
+      release: monitoring # Often required for Prometheus Operator to find it

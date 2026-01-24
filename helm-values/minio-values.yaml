@@ -48,3 +48,12 @@ resources:
   limits:
     memory: 1Gi
     cpu: 500m
+
+# ...existing code...
+metrics:
+  serviceMonitor:
+    enabled: true
+    namespace: data-storage
+    includeNode: true
+    labels:
+      release: monitoring
