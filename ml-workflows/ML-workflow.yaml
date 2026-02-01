@@ -21,7 +21,7 @@ spec:
       - name: test-size
         value: "0.2"
       - name: random-state
-        value: "42"
+        value: "187"
       - name: max-relative-error
         value: "10.0"
       - name: p95-relative-error
@@ -99,7 +99,7 @@ spec:
         - name: script
         - name: cli-args
     container:
-      image: ghcr.io/marius2311/python-for-ml:1.0.3
+      image: ghcr.io/bulianjolloch/python-ml:1.0.7
       command: ["bash", "-c"]
       args:
         - >
@@ -155,7 +155,7 @@ spec:
         - name: script
         - name: cli-args
     container:
-      image: ghcr.io/marius2311/python-for-ml:1.0.3
+      image: ghcr.io/bulianjolloch/python-ml:1.0.7
       command: ["bash", "-c"]
       args:
         - >
@@ -207,7 +207,7 @@ spec:
         - name: script
         - name: cli-args
     container:
-      image: ghcr.io/marius2311/python-for-ml:1.0.3
+      image: ghcr.io/bulianjolloch/python-ml:1.0.7
       command: ["bash", "-c"]
       args:
         - >
