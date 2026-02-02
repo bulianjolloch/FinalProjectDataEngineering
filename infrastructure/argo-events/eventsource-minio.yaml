@@ -13,8 +13,8 @@ spec:
         - s3:ObjectCreated:Put
       insecure: true
       accessKey:
-        name: minio-details
+        name: minio
         key: accesskey
       secretKey:
-        name: minio-details
+        name: minio
         key: secretkey
