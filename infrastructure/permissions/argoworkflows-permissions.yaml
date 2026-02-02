@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-workflow-deploy-role
+  namespace: argo-workflows # Stelle sicher, dass dies dein korrekter Namespace ist
+rules:
+- apiGroups: ["", "apps", "extensions"]
+  resources: ["services", "deployments", "pods", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo-workflow-deploy-binding
+  namespace: argo-workflows
+subjects:
+- kind: ServiceAccount
+  name: argo-workflow      # Der Name deines ServiceAccounts (siehe Workflow YAML)
+  namespace: argo-workflows
+roleRef:
+  kind: Role
+  name: argo-workflow-deploy-role
+  apiGroup: rbac.authorization.k8s.io
