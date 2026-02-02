@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: minio-input
+  namespace: argo-events
+spec:
+  minio:
+    input-data:
+      bucket:
+        name: input-data
+      endpoint: minio.data-storage.svc.cluster.local:9000
+      events:
+        - s3:ObjectCreated:Put
+      insecure: true
+      accessKey:
+        name: minio-details
+        key: accesskey
+      secretKey:
+        name: minio-details
+        key: secretkey

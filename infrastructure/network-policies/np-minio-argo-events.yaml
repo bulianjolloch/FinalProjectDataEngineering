@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-minio-notifications
+  namespace: argo-events
+spec:
+  # Apply this to the EventSource pod
+  podSelector:
+    matchLabels:
+      eventsource-name: minio-input
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        # Allow traffic from the MinIO namespace
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: data-storage
+      ports:
+        # The default port MinIO uses to send notifications to Argo
+        - protocol: TCP
+          port: 12000
