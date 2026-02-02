@@ -4,8 +4,11 @@ metadata:
   name: argo-workflow-deploy-role
   namespace: argo-workflows
 rules:
-  - apiGroups: ["", "apps", "extensions"]
-    resources: ["services", "deployments", "pods", "replicasets"]
+  - apiGroups: [""]
+    resources: ["services", "pods", "configmaps"]  # <--- Added configmaps
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1

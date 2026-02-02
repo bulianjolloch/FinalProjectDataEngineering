@@ -253,72 +253,15 @@ spec:
         - name: training-run-id
           valueFrom:
             path: /tmp/train_run_id.txt
-
-  # Model Deployment
-
+# ...existing code...
   - name: deploy-model-service
     resource:
       action: apply
       manifest: |
         apiVersion: v1
-        kind: Service
+        kind: ConfigMap
         metadata:
-          name: sales-profit-prediction
+          name: test-deploy
           namespace: argo-workflows
-        spec:
-          selector:
-            app: sales-profit-model
-          ports:
-            - protocol: TCP
-              port: 80
-              targetPort: 5000
-          type: ClusterIP
-        ---
-        apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-          name: sales-profit-model-server
-          namespace: argo-workflows
-          labels:
-            app: sales-profit-model
-        spec:
-          replicas: 1
-          selector:
-            matchLabels:
-              app: sales-profit-model
-          template:
-            metadata:
-              labels:
-                app: sales-profit-model
-            spec:
-              containers:
-              - name: mlflow-serving
-                image: ghcr.io/bulianjolloch/python-ml:1.0.4
-                command: ["mlflow", "models", "serve"]
-                args:
-                  - "-m"
-                  - "models:/sales_profit_model/Production"
-                  - "-h"
-                  - "0.0.0.0"
-                  - "-p"
-                  - "5000"
-                  - "--no-conda"
-                ports:
-                  - containerPort: 5000
-                env:
-                  - name: MLFLOW_TRACKING_URI
-                    value: "http://mlflow.mlops.svc.cluster.local:5000"
-                  - name: MLFLOW_S3_ENDPOINT_URL
-                    value: "http://minio.data-storage.svc.cluster.local:9000"
-                  - name: AWS_ACCESS_KEY_ID
-                    valueFrom:
-                      secretKeyRef:
-                        name: minio
-                        key: root-user
-                  - name: AWS_SECRET_ACCESS_KEY
-                    valueFrom:
-                      secretKeyRef:
-                        name: minio
-                        key: root-password
-                  - name: AWS_DEFAULT_REGION
-                    value: "us-east-1"
+        data:
+          test: "success"
