@@ -31,7 +31,7 @@ args:
   - "--address=:9000"
 
 console:
-  enabled: true
+  enabled: false
 
 ingress:
   enabled: true
