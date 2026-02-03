@@ -69,9 +69,16 @@ ingress:
   enabled: true
   ingressClassName: nginx
   hostname: minio.group-unop.dski23a.timebertt.dev
+  extraHosts:
+    - name: console-minio.group-unop.dski23a.timebertt.dev
+      path: /
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
   tls: true
+  extraTls:
+    - hosts:
+        - console-minio.group-unop.dski23a.timebertt.dev
+      secretName: minio-console-tls-cert
 
 resources:
   requests:
@@ -89,18 +96,3 @@ metrics:
     labels:
       release: monitoring
 
-consoleIngress:
-  enabled: true
-  ingressClassName: "nginx"
-  hosts:
-    - console-minio.group-unop.dski23a.timebertt.dev
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-  tls:
-    - secretName: minio-console-tls-cert
-      hosts:
-        - console-minio.group-unop.dski23a.timebertt.dev
-
-buckets: []
