@@ -2,222 +2,90 @@ apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: ml-pipeline-template
+  namespace: argo-workflows
 spec:
-  entrypoint: pipeline
-  serviceAccountName: argo-workflow
-
-  # Default parameters for the template
-  arguments:
-    parameters:
-      - name: experiment-name-mlflow
-        value: "argo-wf-pipeline"
-      - name: bucket-name
-        value: "input-data"
-      - name: filename
-        value: "sales_data.csv"
-      - name: output-path
-        value: "data/processed/"
-      - name: test-size
-        value: "0.2"
-      - name: random-state
-        value: "42"
-      - name: max-relative-error
-        value: "10.0"
-      - name: p95-relative-error
-        value: "1.0"
-      - name: mae-drift-factor
-        value: "1.2"
-      - name: max-mean-residual
-        value: "5.0"
-
+  entrypoint: ml-pipeline
+  serviceAccountName: argo
   templates:
 
-  # ----------------------
-  # Pipeline definition
-  # ----------------------
+    # ----------------------------
+    # DAG ENTRYPOINT
+    # ----------------------------
+    - name: ml-pipeline
+      dag:
+        tasks:
+          - name: eda
+            template: python-task
+            arguments:
+              parameters:
+                - name: script
+                  value: /app/eda.py
 
-  - name: pipeline
-    steps:
-      - - name: eda
-          template: run-script
-          arguments:
-            parameters:
-              - name: script
-                value: exploratory_data_analysis.py
-              - name: cli-args
-                value: >-
-                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
-                  --bucket-name {{workflow.parameters.bucket-name}}
-                  --filename {{workflow.parameters.filename}}
+          - name: preprocessing
+            template: python-task
+            arguments:
+              parameters:
+                - name: script
+                  value: /app/preprocessing.py
+            dependencies: [eda]
 
-      - - name: preprocess
-          template: preprocess-step
-          arguments:
-            parameters:
-              - name: script
-                value: preprocessing.py
-              - name: cli-args
-                value: >-
-                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
-                  --bucket-name {{workflow.parameters.bucket-name}}
-                  --filename {{workflow.parameters.filename}}
-                  --output-path {{workflow.parameters.output-path}}
-                  --test-size {{workflow.parameters.test-size}}
-                  --random-state {{workflow.parameters.random-state}}
+          - name: training
+            template: python-task
+            arguments:
+              parameters:
+                - name: script
+                  value: /app/train.py
+                - name: preprocessing_run_id
+                  value: "{{tasks.preprocessing.outputs.parameters.run_id}}"
+            dependencies: [preprocessing]
 
-      - - name: train
-          template: train-step
-          arguments:
-            parameters:
-              - name: script
-                value: train.py
-              - name: cli-args
-                value: >-
-                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
-                  --preprocessing-run-id {{steps.preprocess.outputs.parameters.preprocessing-run-id}}
+          - name: evaluation
+            template: python-task
+            arguments:
+              parameters:
+                - name: script
+                  value: /app/evaluation.py
+                - name: training_run_id
+                  value: "{{tasks.training.outputs.parameters.run_id}}"
+            dependencies: [training]
 
-      - - name: evaluate
-          template: run-script
-          arguments:
-            parameters:
-              - name: script
-                value: evaluation.py
-              - name: cli-args
-                value: >-
-                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
-                  --training-run-id {{steps.train.outputs.parameters.training-run-id}}
-                  --preprocessing-run-id {{steps.preprocess.outputs.parameters.preprocessing-run-id}}
-                  --max-relative-error {{workflow.parameters.max-relative-error}}
-                  --p95-relative-error {{workflow.parameters.p95-relative-error}}
-                  --mae-drift-factor {{workflow.parameters.mae-drift-factor}}
-                  --max-mean-residual {{workflow.parameters.max-mean-residual}}
-
-  # ----------------------
-  # Base script runner
-  # ----------------------
-
-  - name: run-script
-    inputs:
-      parameters:
-        - name: script
-        - name: cli-args
-    container:
-      image: ghcr.io/bulianjolloch/python-ml:1.0.7
-      command: ["bash", "-c"]
-      args:
-        - python {{inputs.parameters.script}} {{inputs.parameters.cli-args}}
-      envFrom:
-        - configMapRef:
-            name: mlops-runtime-config
-      env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: minio
-              key: root-user
-
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio
-              key: root-password
-
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: postgres-admin
-              key: postgres-user
-
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-admin
-              key: postgres-password
-
-  # ----------------------
-  # Preprocessing step
-  # ----------------------
-
-  - name: preprocess-step
-    inputs:
-      parameters:
-        - name: script
-        - name: cli-args
-    container:
-      image: ghcr.io/bulianjolloch/python-ml:1.0.7
-      command: ["bash", "-c"]
-      args:
-        - python {{inputs.parameters.script}} {{inputs.parameters.cli-args}}
-      envFrom:
-        - configMapRef:
-            name: mlops-runtime-config
-      env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: minio
-              key: root-user
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio
-              key: root-password
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: postgres-admin
-              key: postgres-user
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-admin
-              key: postgres-password
-    outputs:
-      parameters:
-        - name: preprocessing-run-id
-          valueFrom:
-            path: /tmp/preprocessing_run_id.txt
-
-  # ----------------------
-  # Training step
-  # ----------------------
-
-  - name: train-step
-    inputs:
-      parameters:
-        - name: script
-        - name: cli-args
-    container:
-      image: ghcr.io/bulianjolloch/python-ml:1.0.7
-      command: ["bash", "-c"]
-      args:
-        - python {{inputs.parameters.script}} {{inputs.parameters.cli-args}}
-      envFrom:
-        - configMapRef:
-            name: mlops-runtime-config
-      env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: minio
-              key: root-user
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio
-              key: root-password
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: postgres-admin
-              key: postgres-user
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-admin
-              key: postgres-password
-    outputs:
-      parameters:
-        - name: training-run-id
-          valueFrom:
-            path: /tmp/train_run_id.txt
+    # ----------------------------
+    # PYTHON TASK TEMPLATE
+    # ----------------------------
+    - name: python-task
+      inputs:
+        parameters:
+          - name: script
+          - name: preprocessing_run_id
+            default: ""
+          - name: training_run_id
+            default: ""
+      outputs:
+        parameters:
+          - name: run_id
+            valueFrom:
+              path: /tmp/run_id.txt
+      container:
+        image: ghcr.io/bulianjolloch/python-ml:1.0.17
+        command: ["python"]
+        args:
+          - "{{inputs.parameters.script}}"
+          - "--preprocessing-run-id"
+          - "{{inputs.parameters.preprocessing_run_id}}"
+          - "--training-run-id"
+          - "{{inputs.parameters.training_run_id}}"
+        env:
+          - name: MLFLOW_TRACKING_URI
+            value: "http://mlflow.mlops.svc.cluster.local:5000"
+          - name: MLFLOW_S3_ENDPOINT_URL
+            value: "http://minio.data-storage.svc.cluster.local:9000"
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-minio-creds
+                key: accesskey
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-minio-creds
+                key: secretkey

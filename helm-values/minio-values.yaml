@@ -29,9 +29,41 @@ args:
   - server
   - /bitnami/minio/data
   - "--address=:9000"
+  - "--console-address=:9001"
 
 console:
   enabled: false
+
+service:
+  type: ClusterIP
+  ports:
+    api: 9000
+    console: 9001
+
+# Provisioning configuration for bucket notifications
+provisioning:
+  enabled: true
+  buckets: []  # input-data already exists, so we don't recreate it
+  policies: []
+  
+  # Configure the webhook endpoint for Argo Events
+  config:
+    - name: webhook_argo_events
+      options:
+        endpoint: "http://minio-input-eventsource-svc.argo-events.svc.cluster.local:12000/input-data"
+        queue_dir: ""
+        queue_limit: "0"
+  
+  # Configure bucket notifications to send events to the webhook
+  bucketNotifications:
+    - bucket: input-data
+      config: webhook_argo_events
+      events:
+        - s3:ObjectCreated:Put
+        - s3:ObjectCreated:Post
+        - s3:ObjectCreated:Copy
+      prefix: ""
+      suffix: ""
 
 ingress:
   enabled: true
@@ -49,7 +81,6 @@ resources:
     memory: 1Gi
     cpu: 500m
 
-# ...existing code...
 metrics:
   serviceMonitor:
     enabled: true
