@@ -246,6 +246,13 @@ spec:
               {{- end }}
               {{- end }}
 
+              {{- range $notification := .Values.provisioning.bucketNotifications }}
+              {{- $events := join "," $notification.events }}
+              {{- $target := printf "%s/%s" $minioAlias $notification.bucket }}
+              {{- $arn := printf "arn:minio:sqs::%s:webhook" $notification.config }}
+              mc event add {{ $target }} {{ $arn }} --event {{ $events }} --ignore-existing;
+              {{- end }}
+
               {{- if .Values.provisioning.extraCommands }}
               {{ join ";" .Values.provisioning.extraCommands | nindent 14 }};
               {{- end }}
