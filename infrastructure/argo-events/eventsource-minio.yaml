@@ -8,18 +8,8 @@ spec:
     ports:
       - port: 12000
         targetPort: 12000
-  minio:
+  webhook:
     input-data:
-      bucket:
-        name: input-data
-      endpoint: minio.data-storage.svc.cluster.local:9000
-      events:
-        - s3:ObjectCreated:Put
-        - s3:ObjectCreated:Post
-      insecure: true
-      accessKey:
-        name: minio-details  # Changed from 'minio'
-        key: accesskey
-      secretKey:
-        name: minio-details  # Changed from 'minio'
-        key: secretkey
+      port: "12000"
+      endpoint: /input-data
+      method: POST

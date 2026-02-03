@@ -24,7 +24,7 @@ spec:
                 namespace: argo-workflows
               spec:
                 workflowTemplateRef:
-                  name: ml-pipeline-template # <--- MUST MATCH your template name
+                  name: ml-workflow-template
                 arguments:
                   parameters:
                   # Inject filename dynamically from the event
@@ -37,5 +37,5 @@ spec:
           parameters:
             - src:
                 dependencyName: test-dep
-                dataKey: notification.0.s3.object.key
+                dataKey: body.Records.0.s3.object.key
               dest: spec.arguments.parameters.0.value
