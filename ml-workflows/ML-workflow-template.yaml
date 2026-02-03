@@ -105,14 +105,14 @@ spec:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: minio-argo-workflows
-              key: accesskey  # Updated key name to match ExternalSecrets
+              name: minio
+              key: root-user
 
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: minio-argo-workflows
-              key: secretkey # Updated key name to match ExternalSecrets
+              name: minio
+              key: root-password
 
         - name: POSTGRES_USER
           valueFrom:
