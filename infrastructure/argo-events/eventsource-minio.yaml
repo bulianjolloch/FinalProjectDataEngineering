@@ -4,6 +4,10 @@ metadata:
   name: minio-input
   namespace: argo-events
 spec:
+  service:
+    ports:
+      - port: 12000
+        targetPort: 12000
   minio:
     input-data:
       bucket:
@@ -11,10 +15,11 @@ spec:
       endpoint: minio.data-storage.svc.cluster.local:9000
       events:
         - s3:ObjectCreated:Put
+        - s3:ObjectCreated:Post
       insecure: true
       accessKey:
-        name: minio
+        name: minio-details  # Changed from 'minio'
         key: accesskey
       secretKey:
-        name: minio
+        name: minio-details  # Changed from 'minio'
         key: secretkey
