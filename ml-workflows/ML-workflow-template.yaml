@@ -46,6 +46,7 @@ spec:
                 value: >-
                   --bucket-name {{workflow.parameters.bucket-name}}
                   --filename {{workflow.parameters.filename}}
+                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
 
       - - name: preprocess
           template: preprocess-step
