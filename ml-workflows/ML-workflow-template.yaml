@@ -153,7 +153,6 @@ spec:
       env:
         - name: MLFLOW_EXPERIMENT_NAME
           value: "{{workflow.parameters.experiment-name-mlflow}}"
-        # ... (rest of standard env vars) ...
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
@@ -164,7 +163,28 @@ spec:
             secretKeyRef:
               name: minio
               key: root-password
-        # ... (rest of postgres env vars) ...
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-admin
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-admin
+              key: postgres-password
+        - name: MLFLOW_S3_ENDPOINT_URL
+          value: "http://minio.data-storage.svc.cluster.local:9000"
+        - name: MLFLOW_TRACKING_URI
+          value: "http://mlflow.mlops.svc.cluster.local:5000"
+        - name: AWS_DEFAULT_REGION
+          value: "us-east-1"
+        - name: POSTGRES_HOST
+          value: "postgres-postgresql.data-storage.svc.cluster.local"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DB
+          value: "ds_db"
     outputs:
       parameters:
         - name: preprocessing-run-id
@@ -185,7 +205,6 @@ spec:
       env:
         - name: MLFLOW_EXPERIMENT_NAME
           value: "{{workflow.parameters.experiment-name-mlflow}}"
-        # ... (rest of standard env vars) ...
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
@@ -196,7 +215,28 @@ spec:
             secretKeyRef:
               name: minio
               key: root-password
-        # ... (rest of postgres env vars) ...
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-admin
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-admin
+              key: postgres-password
+        - name: MLFLOW_S3_ENDPOINT_URL
+          value: "http://minio.data-storage.svc.cluster.local:9000"
+        - name: MLFLOW_TRACKING_URI
+          value: "http://mlflow.mlops.svc.cluster.local:5000"
+        - name: AWS_DEFAULT_REGION
+          value: "us-east-1"
+        - name: POSTGRES_HOST
+          value: "postgres-postgresql.data-storage.svc.cluster.local"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DB
+          value: "ds_db"
     outputs:
       parameters:
         - name: training-run-id
