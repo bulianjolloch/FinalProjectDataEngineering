@@ -154,18 +154,14 @@ spec:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: minio-argo-workflows
-              key: accesskey
+              name: minio
+              key: root-user
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: minio-argo-workflows
-              key: secretkey
+              name: minio
+              key: root-password
         # ... (rest of postgres env vars) ...
-        - name: MLFLOW_S3_ENDPOINT_URL
-          value: "http://minio.data-storage.svc.cluster.local:9000"
-        - name: MLFLOW_TRACKING_URI
-          value: "http://mlflow.mlops.svc.cluster.local:5000"
     outputs:
       parameters:
         - name: preprocessing-run-id
@@ -190,18 +186,14 @@ spec:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: minio-argo-workflows
-              key: accesskey
+              name: minio
+              key: root-user
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: minio-argo-workflows
-              key: secretkey
+              name: minio
+              key: root-password
         # ... (rest of postgres env vars) ...
-        - name: MLFLOW_S3_ENDPOINT_URL
-          value: "http://minio.data-storage.svc.cluster.local:9000"
-        - name: MLFLOW_TRACKING_URI
-          value: "http://mlflow.mlops.svc.cluster.local:5000"
     outputs:
       parameters:
         - name: training-run-id
