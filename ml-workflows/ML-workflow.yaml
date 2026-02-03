@@ -100,7 +100,7 @@ spec:
         - name: script
         - name: cli-args
     container:
-      image: ghcr.io/bulianjolloch/python-ml:1.0.18
+      image: ghcr.io/bulianjolloch/python-ml:1.0.20
       command: ["bash", "-c"]
       args:
         - >
@@ -156,7 +156,7 @@ spec:
         - name: script
         - name: cli-args
     container:
-      image: ghcr.io/bulianjolloch/python-ml:1.0.18
+      image: ghcr.io/bulianjolloch/python-ml:1.0.20
       command: ["bash", "-c"]
       args:
         - >
@@ -208,7 +208,7 @@ spec:
         - name: script
         - name: cli-args
     container:
-      image: ghcr.io/bulianjolloch/python-ml:1.0.18
+      image: ghcr.io/bulianjolloch/python-ml:1.0.20
       command: ["bash", "-c"]
       args:
         - >
