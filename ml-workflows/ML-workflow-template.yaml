@@ -61,6 +61,7 @@ spec:
                   --output-path {{workflow.parameters.output-path}}
                   --test-size {{workflow.parameters.test-size}}
                   --random-state {{workflow.parameters.random-state}}
+                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
 
       - - name: train
           template: train-step
@@ -71,6 +72,7 @@ spec:
               - name: cli-args
                 value: >-
                   --preprocessing-run-id {{steps.preprocess.outputs.parameters.preprocessing-run-id}}
+                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
 
       - - name: evaluate
           template: run-script
@@ -86,6 +88,7 @@ spec:
                   --p95-relative-error {{workflow.parameters.p95-relative-error}}
                   --mae-drift-factor {{workflow.parameters.mae-drift-factor}}
                   --max-mean-residual {{workflow.parameters.max-mean-residual}}
+                  --experiment-name-mlflow {{workflow.parameters.experiment-name-mlflow}}
 
   - name: run-script
     inputs:
