@@ -40,13 +40,13 @@ service:
     api: 9000
     console: 9001
 
-# Provisioning configuration for bucket notifications
+
 provisioning:
   enabled: true
-  buckets: []  # input-data already exists, so we don't recreate it
+  buckets: []  
   policies: []
   
-  # Configure the webhook endpoint for Argo Events
+
   config:
     - name: webhook_argo_events
       options:
@@ -54,7 +54,7 @@ provisioning:
         queue_dir: ""
         queue_limit: "0"
   
-  # Configure bucket notifications to send events to the webhook
+
   bucketNotifications:
     - bucket: input-data
       config: webhook_argo_events

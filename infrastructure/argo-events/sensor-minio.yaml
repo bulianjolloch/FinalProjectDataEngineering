@@ -20,20 +20,18 @@ spec:
               apiVersion: argoproj.io/v1alpha1
               kind: Workflow
               metadata:
-                generateName: auto-train- # Prefix for the run
+                generateName: auto-train- 
                 namespace: argo-workflows
               spec:
                 workflowTemplateRef:
                   name: ml-workflow-template
                 arguments:
                   parameters:
-                  # Inject filename dynamically from the event
                   - name: filename
                     value: "PLACEHOLDER"
                   - name: bucket-name
                     value: "input-data"
 
-          # This section maps the Event Data -> Workflow Parameter
           parameters:
             - src:
                 dependencyName: test-dep

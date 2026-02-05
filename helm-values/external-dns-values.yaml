@@ -22,4 +22,4 @@ sources:
 - service
 
 registry: txt
-txtOwnerId: group-unop # <cluster-name>, e.g., student-abcd
+txtOwnerId: group-unop 

@@ -8,7 +8,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: operate-workflow-role
-  namespace: argo-workflows # <--- Access granted IN the workflow namespace
+  namespace: argo-workflows 
 rules:
   - apiGroups: ["argoproj.io"]
     resources: ["workflows", "workflowtemplates"]
